@@ -23,6 +23,9 @@ for col in bool_columns:
 
 nan_rows = x_dummies.isnull().any(axis=1)
 x_dummies= x_dummies[~nan_rows]
+
+# nan_rows = x_drop.isnull().any(axis=1)
+# x_drop= x_drop[~nan_rows]
 print("NaN values in x_dummies: ", x_dummies.isnull().any().any())
 # x_dummies.to_csv('datadummies.csv',index =False)
 # print(x_dummies) # [1020 rows x 43 columns]
@@ -33,10 +36,11 @@ y= y[~nan_rows]
 # !try different scalers?
 scaler = StandardScaler()
 x_scaler = scaler.fit_transform(x_dummies)
+
 # print(x_scaler)
 
 # !test the minimum data require to train 
-X_train, X_test, y_train, y_test = train_test_split(x_scaler, y, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(x_scaler, y, test_size=0.4, random_state=42)
 
 class LinearRegression():
     def __init__(self):
@@ -57,8 +61,6 @@ class LinearRegression():
     
 model = LinearRegression()
 model.fit(X_train, y_train) 
-
-
 y_train_pred = model.predict(X_train)
 y_test_pred = model.predict(X_test)
 
@@ -85,10 +87,8 @@ print(f"MAE (Test): {mae_test:.4f}")
 
 model2 = LinearRegression()
 yh = model2.fit(X_test, y_test).predict(X_test)
-plt.plot(X_test, y_test, ".")
-plt.plot(X_test, yh, "g-", alpha=0.5)
-plt.xlabel("x")
-plt.ylabel("r")
+plt.scatter(yh, y_test)
+plt.xlabel("yh")
+plt.ylabel("y_test")
 plt.show()
-
 
