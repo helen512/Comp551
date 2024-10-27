@@ -43,20 +43,18 @@ x_scaler = scaler.fit_transform(x_dummies)
 X_train, X_test, y_train, y_test = train_test_split(x_scaler, y, test_size=0.4, random_state=42)
 
 class LinearRegression():
-    def __init__(self):
-        self.coefficients = None
-        self.intercept = None
+    def __init__(self, add_bias=True):
+        self.add_bias = add_bias
     def fit(self, X, y):
-        X = np.hstack([np.ones((X.shape[0], 1)), X])
+        if self.add_bias:
+            X = np.hstack([np.ones((X.shape[0], 1)), X])
         self.coefficients = np.linalg.inv(X.T.dot(X)).dot(X.T).dot(y)
-        # print(np.linalg.inv(X.T.dot(X)))
-        # print(self.coefficients)
-        self.intercept = self.coefficients[0]
-        self.coefficients = self.coefficients[1:]
         return self
 
     def predict(self, X):
-        f = X.dot(self.coefficients) + self.intercept
+        if self.add_bias:
+            X = np.hstack([np.ones((X.shape[0], 1)), X])
+        f = X.dot(self.coefficients)
         return f
     
 model = LinearRegression()
